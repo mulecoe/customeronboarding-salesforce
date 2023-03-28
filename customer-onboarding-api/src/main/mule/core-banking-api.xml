@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd">
+	<flow name="core-banking-apiFlow" doc:id="649d3d6c-9863-42f1-abbe-b34766cf09dd" >
+		<salesforce:subscribe-topic-listener doc:name="Subscribe topic listener" doc:id="15a1aaa7-c07c-4a6e-ad41-091dd06849f3" config-ref="leads-config" topic="${salesforce.corebankingTopic}"/>
+		<ee:transform doc:name="Saving payload" doc:id="a566233f-c0d9-4cec-a98d-ad4c7f834ec4" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="type" ><![CDATA[payload."Type__c"
+]]></ee:set-variable>
+				<ee:set-variable variableName="accountId" ><![CDATA[%dw 2.0
+output application/json
+---
+payload.Id]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<http:request method="GET" doc:name="SF aggregator" doc:id="b8475b37-e23f-4087-8ae9-41f48eb0e419" url="${salesforce.aggregratorapiurl}">
+			<http:query-params ><![CDATA[#[output application/java
+---
+{
+	"id" : payload.Id
+}]]]></http:query-params>
+		</http:request>
+		<choice doc:name="Choice" doc:id="f8483b43-bad1-4b97-99c6-89b591e67365">
+			<when expression='#["JHA"== vars."type"]'>
+				<ee:transform doc:name="Input payload" doc:id="f7e09b91-f213-4c7e-8003-6ae4f6dd9b02" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+  "custid": payload.Contact.Id,
+  "atmcard": "",
+  "brcode": "",
+  "accttype": payload.Account.Account_Type__c,
+  "acctid": payload.Account.Id,
+  "prodcode": "",
+  "status": "",
+  "blockedstatus": "",
+  "type": payload.Account."type",
+  "modeofoperation": ""
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+				<http:request method="POST" doc:name="Request to JHA" doc:id="4ba3edfc-188f-4d55-a7bf-48229c555fd5" url="${corebanking.jha}" />
+			</when>
+			<when expression='#["Temenos" == vars."type"]'>
+				<ee:transform doc:name="Input payload" doc:id="d3428e1f-692b-44b4-8976-cfafcf11086c" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+    "name" : payload.Contact.Name,
+    "custName" : payload.Contact.Name,
+    "mobile" : payload."Reference Contact".MobilePhone,
+    "email" : payload.Contact.Email,
+    "gender" : payload.Contact.Gender__c,
+    "dateOfBirth" :payload.Contact.Birthdate,
+    "customerStatus" : "",
+    "language" : payload.Account.Preffered_language__c,
+    "customerMnemonic" : "",
+    "nationalityId" : "",
+    "accountOfficerId" : "",
+    "industryId" : "",
+    "target" : "",
+    "sectorId" : "",
+    "customerId" : ""
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+				<http:request method="POST" doc:name="Request to Temenos" doc:id="24c9b9d3-e351-4c35-83d1-785cffcadfa2" url="${corebanking.temenos}"/>
+			</when>
+			<otherwise >
+				<ee:transform doc:name="Input payload" doc:id="0d8ec0c1-2dd1-406a-88f6-f58d98120601" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Message" :"FIS"
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</otherwise>
+		</choice>
+		<ee:transform doc:name="Transform Message" doc:id="4a6c9c31-74bf-4d36-89a3-8e4419d0ca03" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="67d4ca17-e35e-42f2-a4a3-d136f9752c1a" message="#[payload]"/>
+		<flow-ref doc:name="updateSfstatus" doc:id="d663f425-9584-4aba-afa1-2cf6007264b6" name="updateSfstatus"/>
+		<logger level="INFO" doc:name="Logger" doc:id="dfff785f-9d4f-4380-ad4e-4737caa09728" message='"Final Salesforce status updated" '/>
+	</flow>
+	<flow name="updateSfstatus" doc:id="76603083-e1c5-4ab7-b528-f0bb71c7c14c" >
+		<ee:transform doc:name="Transform Message" doc:id="ffa209cf-8fe7-4b76-af28-bdc3e2e8b5cd" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+[{
+    Id: vars.accountId,
+    Status__c : "User Acceptance"
+}]]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<salesforce:update doc:name="Update" doc:id="984a1c5a-779f-4e31-8d88-a3d4fc2906f0" config-ref="leads-config" type="Account"/>
+		<ee:transform doc:name="Transform Message" doc:id="ab32891b-d569-4711-ace4-954687a8334d" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="34963239-a2b3-4364-a0dd-bb65f3401501" message="#[payload]"/>
+	</flow>
+</mule>

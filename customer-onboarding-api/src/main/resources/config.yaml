@@ -1,0 +1,42 @@
+salesforce:
+  uploadurl: "http://salesforce-document-api.sg-s1.cloudhub.io/api/documents"
+  subcribertopic : "creditreportrequested"
+  topicName : "created"
+  leadsTopic : "working-contacted"
+  corebankingTopic: "Opencorebanking"
+  aggregratorapiurl: "http://customeronboarding-salesforce-api.sg-s1.cloudhub.io/api/customer/customerdetails"
+    
+pdf:  
+  url: "http://pdf-generator-api.sg-s1.cloudhub.io/api/generate-pdf/"  
+  templateid: "479563"  
+  
+verification:
+  url: "http://lending-verification-api.sg-s1.cloudhub.io//v1/creditScore/{SSN}"
+  
+plaidaccelerator:
+  basePath: "api"
+  url: "plaid-accelerator-api.sg-s1.cloudhub.io"
+  path: "upload-document"
+  
+commsaccelerator:
+  url: "nous-comms-accelerator.sg-s1.cloudhub.io"
+  basePath: "api"
+  path: "comms/notify/email"
+  
+formsaccelerator:
+  url: "http://forms-accelerator-api.sg-s1.cloudhub.io/api/nous/mulesoftforms/generate/{envelop-id}"
+  loanform: "4ae99116-f715-4775-b9e1-4fcd1248a7d3"
+  otpform: "08333f63-113e-492c-8ff7-08ad1b3a23f3"
+  customeronboarding: "af49964b-13b0-4207-afe3-baef7be8efb4"
+    
+storage:
+  url: "salesforce-document-api.sg-s1.cloudhub.io"
+  basePath: "api"
+  path: "documents"
+ 
+customer:
+  useracceptance: "http://customeronboarding-useracceptance-api.sg-s1.cloudhub.io/api/nous/mulesoftforms/generate"
+  
+corebanking:
+  jha: "http://jha-soap-wrapper-api.sg-s1.cloudhub.io/api/add-account"
+  temenos: "http://temenos-api.sg-s1.cloudhub.io/api/create-customer"        

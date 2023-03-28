@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_69e04778_6dba_4e29_a06c_6a4a967831d6_Output_Variables_accountmapping = Array<{| Name: Any |}>
+

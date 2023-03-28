@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<flow name="salesforce-aggregator-apiFlow" doc:id="cee21dfe-11e4-410c-93a3-4cac49482f7d" >
+<set-variable value="#[attributes.queryParams.id]" doc:name="Set Variable" doc:id="af0b50af-6672-4f9e-b953-bbe7534f3fc0" variableName="accountId"/>
+		<flow-ref doc:name="getAccountsSub_Flow" doc:id="6088b9ec-9daa-445b-a215-87d7645b0322" name="getAccountsSub_Flow"/>
+		<flow-ref doc:name="retrieveContact" doc:id="6c0232f4-6e59-4e0e-897e-b2b73e5c3587" name="retrieveContact" />
+		<flow-ref doc:name="retrieve reference contact" doc:id="2978433d-443a-4535-97a3-dc01322353de" name="getReferenceContactSub_Flow"/>
+		<ee:transform doc:name="payload" doc:id="e2014f36-fa2b-4c13-9870-0fb9bf467af3" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json skipNullOn="everywhere"
+---
+[
+"Account": vars.account reduce $$,
+"Contact" : vars.contact reduce $$,
+"Reference Contact": vars.refcontact reduce $$
+]]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="getaddressflow" doc:id="afb6c420-d4a2-4ff5-81f8-2a058c7049db" >
+		<ee:transform doc:name="Transform Message" doc:id="6a0e6f1f-eb5d-4cae-8df8-9dff5abd374f" >
+			<ee:message >
+				<ee:set-payload ><![CDATA["Select Fields(ALL) from Address__c where Id = '" ++ payload ++ "'"]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<salesforce:query doc:name="Query" doc:id="84108913-a02f-4ddb-af02-9ca1412bc03c" config-ref="leads-config">
+			<salesforce:salesforce-query ><![CDATA[#[payload]]]></salesforce:salesforce-query>
+		</salesforce:query>
+		<ee:transform doc:name="Transform Message" doc:id="79dc9075-e034-445b-82aa-082fa8253a17" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<sub-flow name="retrieveContact" doc:id="b305d993-56e6-4130-8e7c-c429ff568350" >
+		<ee:transform doc:name="sf query" doc:id="9238bdbc-6e9b-4cab-a80d-fad9911c3fe6">
+			<ee:message>
+				<ee:set-payload><![CDATA["Select Fields(ALL) from Contact where Account.Id = '" ++ vars.accountId ++ "'"]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<salesforce:query doc:name="Query to retrieve contact details" doc:id="d0e1d91c-7bcb-4fdc-a64d-c0398f3b04c5" config-ref="leads-config">
+			<salesforce:salesforce-query ><![CDATA[#[payload]]]></salesforce:salesforce-query>
+			<salesforce:headers />
+		</salesforce:query>
+		<ee:transform doc:name="vars.contact" doc:id="1a5ee023-a9b9-4530-bb3c-a3d0d486accd" >
+			<ee:message />
+			<ee:variables >
+				<ee:set-variable variableName="contact" ><![CDATA[%dw 2.0
+output application/json skipNullOn="everywhere"
+---
+payload]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<set-variable value="#[vars.contact.'Reference_Contact__c' reduce $$]" doc:name="Set Variable" doc:id="f07aa52d-8b03-4ca6-a4b1-7393a9158d51" variableName="refid"/>
+	</sub-flow>
+	<sub-flow name="getAccountsSub_Flow" doc:id="077fc2a6-6182-499a-b6a8-aec9737655d2" >
+		<ee:transform doc:name="Transform Message" doc:id="2a5b8dcf-5bf2-46e4-a9a7-c7050855ddcf" >
+			<ee:message >
+				<ee:set-payload ><![CDATA["Select Fields(ALL) from Account where Id = '" ++ vars.accountId ++ "' limit 50"]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<salesforce:query doc:name="Query" doc:id="52d22e82-b349-48be-8371-cb6a2bf0ca3d" config-ref="leads-config">
+			<salesforce:salesforce-query ><![CDATA[#[payload]]]></salesforce:salesforce-query>
+		</salesforce:query>
+		<ee:transform doc:name="vars.account" doc:id="ae1ef902-6870-4b9d-b3c6-ee34f851d2e5" >
+			<ee:message />
+			<ee:variables >
+				<ee:set-variable variableName="account" ><![CDATA[%dw 2.0
+output application/json skipNullOn="everywhere"
+---
+payload map ((item, index) -> item ++ {"permanentaddress" :Mule::lookup('getaddressflow', payload.PermanentAddress__c[0],20000)[0],
+	"previousaddress" :Mule::lookup('getaddressflow', payload.PreviousAddress__c[0],20000)[0],
+	"correspondenceaddress" :Mule::lookup('getaddressflow', payload.CorrespondenceAddress__c[0],20000)[0]
+	
+}
+)]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+	</sub-flow>
+	<flow name="salesforce-aggregator-Emailapi" doc:id="c8250a13-f2a3-4448-b7ab-aec79098cdd7" >
+		<ee:transform doc:name="Transform Message" doc:id="8edad220-cee0-46dd-95df-b45e772e9146" >
+			<ee:message >
+				<ee:set-payload ><![CDATA["Select Account.Status__c from Contact where Email like '" ++ attributes.queryParams.email ++ "' limit 200"]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<salesforce:query doc:name="Query" doc:id="59ce52d2-a8f4-4f3c-b004-c63f45b8fa59" config-ref="leads-config">
+			<salesforce:salesforce-query ><![CDATA[#[payload]]]></salesforce:salesforce-query>
+		</salesforce:query>
+		<ee:transform doc:name="Transform Message" doc:id="8082b0a2-14f3-4999-9e27-c2ec36066e76" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json skipNullOn="everywhere"
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<sub-flow name="getReferenceContactSub_Flow" doc:id="9df84515-944d-416f-87cc-4497d05c0fb8" >
+		<ee:transform doc:name="Transform Message" doc:id="a6c58828-11eb-4eb6-b5aa-47d835cd3eee" >
+			<ee:message >
+				<ee:set-payload ><![CDATA["Select Fields(ALL) from Contact where Id = '" ++ vars.refid ++ "' limit 200"]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<salesforce:query doc:name="Query" doc:id="950011de-4941-44cb-a01f-90e250e30f59" config-ref="leads-config" >
+			<salesforce:salesforce-query ><![CDATA[#[payload]]]></salesforce:salesforce-query>
+		</salesforce:query>
+		<ee:transform doc:name="Transform Message" doc:id="c2d01220-920b-4824-823d-9fd237dff2a6" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="refcontact" ><![CDATA[%dw 2.0
+output application/json skipNullOn="everywhere"
+---
+payload]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+	</sub-flow>
+</mule>

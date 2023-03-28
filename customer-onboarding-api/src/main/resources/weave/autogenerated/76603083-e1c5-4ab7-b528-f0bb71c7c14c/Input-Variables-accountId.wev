@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_76603083_e1c5_4ab7_b528_f0bb71c7c14c_Input_Variables_accountId = String {"typeId": "Id"} | Null
+

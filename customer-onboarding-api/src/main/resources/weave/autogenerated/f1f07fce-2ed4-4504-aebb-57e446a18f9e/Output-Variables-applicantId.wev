@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_f1f07fce_2ed4_4504_aebb_57e446a18f9e_Output_Variables_applicantId = String | Null
+

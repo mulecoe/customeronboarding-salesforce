@@ -1,0 +1,9 @@
+%dw 2.0
+
+type auto_f1f07fce_2ed4_4504_aebb_57e446a18f9e_Input_Variables_employment = Array<{ _?: java_lang_Object }>
+type java_lang_Object = {|  |} {"typeAlias": "Object",
+"class": "java.lang.Object",
+"typeId": "java.lang.Object"}
+
+
+

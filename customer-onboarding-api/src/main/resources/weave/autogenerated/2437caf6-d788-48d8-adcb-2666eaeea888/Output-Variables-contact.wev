@@ -1,0 +1,9 @@
+%dw 2.0
+
+type auto_2437caf6_d788_48d8_adcb_2666eaeea888_Output_Variables_contact = Array<{ _?: java_lang_Object }>
+type java_lang_Object = {|  |} {"typeAlias": "Object",
+"class": "java.lang.Object",
+"typeId": "java.lang.Object"}
+
+
+
