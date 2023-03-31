@@ -1,0 +1,24 @@
+
+  [
+    {
+        "Account": {
+            "type": "Account",
+            "Status__c": "Auto Verification"
+        },
+        "type": "Contact"
+    },
+    {
+        "Account": {
+            "type": "Account",
+            "Status__c": "Auto Verification"
+        },
+        "type": "Contact"
+    },
+    {
+        "Account": {
+            "type": "Account",
+            "Status__c": "Credit Report Requested"
+        },
+        "type": "Contact"
+    }
+]
