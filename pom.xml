@@ -96,13 +96,7 @@
 			<version>1.5.11</version>
 			<classifier>mule-plugin</classifier>
 		</dependency>
-		<dependency>
-			<groupId>551efc85-4561-403b-9bba-8e45bdf1a723</groupId>
-			<artifactId>customeronboarding-api</artifactId>
-			<version>1.0.1</version>
-			<classifier>raml</classifier>
-			<type>zip</type>
-		</dependency>
+		
 	</dependencies>
 
 	<repositories>
