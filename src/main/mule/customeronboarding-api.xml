@@ -3,7 +3,7 @@
     <http:listener-config name="customeronboarding-api-httpListenerConfig">
         <http:listener-connection host="0.0.0.0" port="8081" />
     </http:listener-config>
-    <apikit:config name="customeronboarding-api-config" api="resource::551efc85-4561-403b-9bba-8e45bdf1a723:customeronboarding-api:1.0.1:raml:zip:customeronboarding-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <apikit:config name="customeronboarding-api-config" api="api\customeronboarding-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
     <flow name="customeronboarding-api-main">
         <http:listener config-ref="customeronboarding-api-httpListenerConfig" path="/api/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
