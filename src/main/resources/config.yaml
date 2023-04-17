@@ -21,7 +21,7 @@ plaidaccelerator:
 commsaccelerator:
   url: "nous-comms-accelerator.sg-s1.cloudhub.io"
   basePath: "api"
-  path: "comms/notify/email"
+  path: "comms/notify/email" 
   
 formsaccelerator:
   url: "http://forms-accelerator-api.sg-s1.cloudhub.io/api/nous/mulesoftforms/generate/{envelop-id}"
