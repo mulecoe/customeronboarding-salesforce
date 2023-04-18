@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd ">
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd ">
     <http:listener-config name="customeronboarding-api-httpListenerConfig">
         <http:listener-connection host="0.0.0.0" port="8081" />
     </http:listener-config>
@@ -124,33 +124,33 @@ output application/json
         </error-handler>
     </flow>
     <flow name="put:\customer\leads\(leadId)\owner:application\json:customeronboarding-api-config">
-		<flow-ref doc:name="updateOwner" doc:id="ebef2c9f-01cf-47b4-b2bd-a3f351bcd015" name="updateOwner" />
+        <flow-ref doc:name="updateOwner" doc:id="ebef2c9f-01cf-47b4-b2bd-a3f351bcd015" name="updateOwner" />
     </flow>
     <flow name="put:\customer\leads\(leadId)\status:application\json:customeronboarding-api-config">
-		<flow-ref doc:name="updateStatus" doc:id="be4bf151-6cb2-44b9-abc6-f9ef0fe622f4" name="updateStatus" />
+        <flow-ref doc:name="updateStatus" doc:id="be4bf151-6cb2-44b9-abc6-f9ef0fe622f4" name="updateStatus" />
     </flow>
     <flow name="get:\customer\customerdetails:customeronboarding-api-config">
-		<flow-ref doc:name="salesforce-aggregator-apiFlow" doc:id="ff7db916-2968-49d3-9992-4bc048cc8741" name="salesforce-aggregator-apiFlow" />
+        <flow-ref doc:name="salesforce-aggregator-apiFlow" doc:id="ff7db916-2968-49d3-9992-4bc048cc8741" name="salesforce-aggregator-apiFlow" />
     </flow>
     <flow name="get:\customer\customerdetailsbyemail:customeronboarding-api-config">
-		<flow-ref doc:name="salesforce-aggregator-Emailapi" doc:id="44af819c-96f2-40a0-90d7-bf4fe1edf3c4" name="salesforce-aggregator-Emailapi" />
+        <flow-ref doc:name="salesforce-aggregator-Emailapi" doc:id="44af819c-96f2-40a0-90d7-bf4fe1edf3c4" name="salesforce-aggregator-Emailapi" />
     </flow>
     <flow name="get:\customer\documents:customeronboarding-api-config">
-		<flow-ref doc:name="getContentVersionByParentIdFlow" doc:id="142c35e4-7cc5-426b-aee5-b6d2bef3e449" name="getContentVersionByParentIdFlow" />
+        <flow-ref doc:name="getContentVersionByParentIdFlow" doc:id="142c35e4-7cc5-426b-aee5-b6d2bef3e449" name="getContentVersionByParentIdFlow" />
     </flow>
     <flow name="get:\customer\leads\(leadId):customeronboarding-api-config">
-		<flow-ref doc:name="getLeads" doc:id="8a1d6bb3-5fe7-4090-82d7-b2147d1a09bc" name="getLeads" />
+        <flow-ref doc:name="getLeads" doc:id="8a1d6bb3-5fe7-4090-82d7-b2147d1a09bc" name="getLeads" />
     </flow>
     <flow name="get:\customer\leads\owner\(ownerId):customeronboarding-api-config">
-		<flow-ref doc:name="getLeadsBasedOnOwnerId" doc:id="0e83c1fa-b9da-4614-9683-f44f9bd7fc27" name="getLeadsBasedOnOwnerId" />
+        <flow-ref doc:name="getLeadsBasedOnOwnerId" doc:id="0e83c1fa-b9da-4614-9683-f44f9bd7fc27" name="getLeadsBasedOnOwnerId" />
     </flow>
     <flow name="post:\customer\documents:multipart\form-data:customeronboarding-api-config">
-		<flow-ref doc:name="uploadDoc" doc:id="6a011e83-befa-4f6d-9878-0e104e528c90" name="uploadDoc" />
+        <flow-ref doc:name="uploadDoc" doc:id="6a011e83-befa-4f6d-9878-0e104e528c90" name="uploadDoc" />
     </flow>
     <flow name="post:\customer\leads:application\json:customeronboarding-api-config">
-		<flow-ref doc:name="postLeads" doc:id="a406d6f4-8d5f-484f-95f2-5c0fb55be2c0" name="postLeads" />
+        <flow-ref doc:name="postLeads" doc:id="a406d6f4-8d5f-484f-95f2-5c0fb55be2c0" name="postLeads" />
     </flow>
     <flow name="post:\loanform\submit:application\json:customeronboarding-api-config">
-		<flow-ref doc:name="submit-formdata-Flow" doc:id="8be914b9-ffe4-4fe4-bf87-a0885734fed0" name="submit-formdata-Flow" />
+        <flow-ref doc:name="submit-formdata-Flow" doc:id="8be914b9-ffe4-4fe4-bf87-a0885734fed0" name="submit-formdata-Flow" />
     </flow>
 </mule>
