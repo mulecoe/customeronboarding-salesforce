@@ -2,7 +2,7 @@ salesforce:
   uploadurl: "http://salesforce-document-api.sg-s1.cloudhub.io/api/documents"
   subcribertopic : "creditreportrequested"
   topicName : "created"
-  leadsTopic : "working-contacted"
+  leadsTopic : "working-contacted-co"
   corebankingTopic: "Opencorebanking"
   aggregratorapiurl: "http://customeronboarding-salesforce-api.sg-s1.cloudhub.io/api/customer/customerdetails"
     
